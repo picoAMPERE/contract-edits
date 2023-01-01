@@ -239,7 +239,7 @@ contract VeSeaDice is AccessControl, Pausable {
             ) {
                 Game memory _game = pendingGames[i];
 
-                _game.roll = _random(100, _game.blockNumber);
+                _game.roll = _random(100, _game.blockNumber, _game.gameNumber);
 
                 bool winner = _game.odds > _game.roll;
 
@@ -416,9 +416,9 @@ contract VeSeaDice is AccessControl, Pausable {
         return result;
     }
     */
-    function _random(uint256 maxVal, uint256 _blockNumber) internal returns (uint256) {
+    function _random(uint256 maxVal, uint256 _blockNumber, uint256 _gameNumber) internal returns (uint256) {
         Extension en = Extension(0x0000000000000000000000457874656E73696F6e);
-        uint256 result = uint256(en.blockID(_blockNumber + 1));
+        uint256 result = uint256(keccak256(abi.encodePacked(en.blockID(_blockNumber + 1), _gameNumber)));
         result = (result % maxVal) + 1;
         emit RandomNumber(result);
         return result;
